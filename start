@@ -1,6 +1,6 @@
 #!/bin/sh
 # Copyright (c) 2023 Aaron Ayub
-# SPDX-License_Identifier: GPL-3.0-only
+# SPDX-License-Identifier: GPL-3.0-only
 
 # Set up network namespace if not already done
 ip netns add nsvpn
