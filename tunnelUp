@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Copyright (c) 2023 Aaron Ayub
 # SPDX-License-Identifier: GPL-3.0-only
 
@@ -7,3 +7,30 @@
 /usr/sbin/ip netns exec nsvpn /usr/sbin/ip link set tun0 up
 /usr/sbin/ip netns exec nsvpn /usr/sbin/ip addr add "$ifconfig_local" peer "$route_vpn_gateway" dev tun0
 /usr/sbin/ip netns exec nsvpn /usr/sbin/ip route add default dev tun0
+
+# Update the resolv.conf file according to the OpenVPN config
+search=""
+ns=""
+i=0
+while true; do
+		i=$((i+1))
+    optionNum="foreign_option_$i"
+    opt="${!optionNum}"
+    [ -z "$opt" ] && break
+		# Gather the search directives
+    if [ "$opt" != "${opt#dhcp-option DOMAIN}" ]; then
+        search="${search} ${opt#dhcp-option DOMAIN}"
+		# Gather all nameserver directives
+    elif [ "${opt}" != "${opt#dhcp-option DNS}" ]; then
+        ns="${ns}nameserver ${opt#dhcp-option DNS}\n"
+    fi
+done
+
+# Write into the parsed directives into the namespaced resolv.conf file 
+if [ -n "$ns" ]; then
+    [ -n "$search" ] && search="search$search\n"
+
+		mkdir -p /etc/netns/nsvpn
+    echo -e "${search}${ns}" > /etc/netns/nsvpn/resolv.conf
+    chmod 644 /etc/netns/nsvpn/resolv.conf
+fi
