@@ -6,4 +6,11 @@
 ip netns add nsvpn
 ip netns exec nsvpn ip link set lo up
 
+# Setup namespaced nsswitch.conf
+mkdir -p /etc/netns/nsvpn
+if ! cp ./nsswitch.conf /etc/netns/nsvpn/nsswitch.conf; then
+	echo "Could not write to nsswitch.conf file. Exiting early."
+	exit 1
+fi
+
 openvpn --route-noexec --ifconfig-noexec --script-security 2 --up-delay --up ./tunnelUp "$@"
