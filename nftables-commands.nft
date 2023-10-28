@@ -1,0 +1,15 @@
+#!/usr/sbin/nft -f
+# Copyright (c) 2023 Aaron Ayub
+# SPDX-License-Identifier: GPL-3.0-only
+add table inet nsvpn
+add chain inet nsvpn input { type filter hook input priority 0 ; policy drop; }
+add chain inet nsvpn forward { type filter hook forward priority 0 ; policy drop; }
+add chain inet nsvpn output { type filter hook output priority 0 ; policy drop; }
+add chain inet nsvpn whitelist
+add rule inet nsvpn input iifname "lo" accept
+add rule inet nsvpn input iifname "tun0" accept
+add rule inet nsvpn input ct state related,established accept
+add rule inet nsvpn input ct state invalid drop
+add rule inet nsvpn output oifname "lo" accept
+add rule inet nsvpn output jump whitelist
+add rule inet nsvpn output oifname "tun0" accept
