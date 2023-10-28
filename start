@@ -19,4 +19,7 @@ if ! ip netns exec nsvpn nft list table inet nsvpn >/dev/null && ! ip netns exec
 	exit 1
 fi
 
-openvpn --route-noexec --ifconfig-noexec --script-security 2 --up-delay --up ./tunnelUp "$@"
+openvpn --route-noexec --ifconfig-noexec --script-security 2 --up-delay \
+	--up ./tunnelUp \
+	--route-pre-down ./routePreDown \
+	"$@"

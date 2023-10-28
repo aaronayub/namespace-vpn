@@ -7,6 +7,7 @@ Namespace-VPN is a set of scripts to partition traffic into network namespaces, 
 - Linux
 - OpenVPN
 - Bash
+- nftables
 
 ## License
 This program is made available under the terms of the GPL 3.0 only.
