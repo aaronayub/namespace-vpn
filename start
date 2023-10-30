@@ -2,6 +2,19 @@
 # Copyright (c) 2023 Aaron Ayub
 # SPDX-License-Identifier: GPL-3.0-only
 
+# Terminate early if openvpn is already running
+running=$(pgrep openvpn);
+if [ "${running:-null}" != null ] ; then
+    echo "OpenVPN is already running. Exiting early."
+    exit 1
+fi
+
+# Terminate early if not running as root
+if [ "$(id -u)" -ne 0 ]; then
+	echo "Namespace-vpn requires root privileges to run. Exiting early."
+	exit 1
+fi
+
 # Set up network namespace if not already done
 ip netns add nsvpn
 ip netns exec nsvpn ip link set lo up
