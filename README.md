@@ -1,7 +1,20 @@
 # Namespace-VPN
-**This project is currently under development**
-
 Namespace-VPN is a set of scripts to partition traffic into network namespaces, such that each namespace is functionally separate from one another.
+
+Namespace-VPN handles the creation of a network namespace "nsvpn", maintenance of firewall rules with nftables, and namespaced DNS resolution.
+
+## Usage
+In order to create one namespaced VPN tunnel, run the start script, followed by any arguments to OpenVPN, such as config files, authentication, or timeout settings. For example, you can start namespace-vpn by running the following within the working directory of this project:
+
+```bash
+sudo ./start {OPENVPN_ARGUMENTS}
+```
+
+With the namespace created and the tunnel established, any programs can now be run in the "nsvpn" network namespace. One way to run commands is with the "ip" command's netns exec object. For example, commands can be run in the nsvpn namepsace with the following command:
+
+```bash
+sudo ip netns exec nsvpn sudo -u $USER {COMMAND}
+```
 
 ## Requirements
 - Linux
