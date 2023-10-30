@@ -3,11 +3,13 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 # Whitelist the VPN connection on the namespace
+# shellcheck disable=2154 # envvars below are provided by OpenVPN
 /usr/sbin/ip netns exec nsvpn /usr/sbin/nft add rule inet nsvpn whitelist ip daddr "$trusted_ip" tcp dport "$trusted_port" accept
 
-# Move the tun0 device to the vpn namespace, configure it to use the endpoint and gateway provided by OpenVPN
+# Move the tun0 device to the vpn namespace, configure it to use the endpoint and gateway
 /usr/sbin/ip link set tun0 netns nsvpn
 /usr/sbin/ip netns exec nsvpn /usr/sbin/ip link set tun0 up
+# shellcheck disable=SC2154 # envvars below are provided by OpenVPN
 /usr/sbin/ip netns exec nsvpn /usr/sbin/ip addr add "$ifconfig_local" peer "$route_vpn_gateway" dev tun0
 /usr/sbin/ip netns exec nsvpn /usr/sbin/ip route add default dev tun0
 
