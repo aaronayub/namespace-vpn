@@ -22,6 +22,7 @@ int main(int argc, char **argv) {
 
 	// Unshare mount namespace and bind mount conf files for DNS resolution
 	if (unshare(CLONE_NEWNS) != 0) return 3;
+	if (mount("","/","",MS_REC|MS_PRIVATE,NULL) !=0) return 4;
 	if (mount("/etc/netns/nsvpn/resolv.conf","/etc/resolv.conf","",MS_BIND|MS_RDONLY,NULL) !=0) return 4;
 	if (mount("/etc/netns/nsvpn/nsswitch.conf","/etc/nsswitch.conf","",MS_BIND|MS_RDONLY,NULL) !=0) return 4;
 
