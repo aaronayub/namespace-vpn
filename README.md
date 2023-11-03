@@ -3,14 +3,27 @@ Namespace-VPN is a set of scripts to partition traffic into network namespaces, 
 
 Namespace-VPN handles the creation of a network namespace "nsvpn", maintenance of firewall rules with nftables, and namespaced DNS resolution.
 
-## Usage
+## Running namespace-vpn
 In order to create one namespaced VPN tunnel, run the start script, followed by any arguments to OpenVPN, such as config files, authentication, or timeout settings. For example, you can start namespace-vpn by running the following within the working directory of this project:
 
 ```bash
 sudo ./start {OPENVPN_ARGUMENTS}
 ```
 
-With the namespace created and the tunnel established, any programs can now be run in the "nsvpn" network namespace. One way to run commands is with the "ip" command's netns exec object. For example, commands can be run in the nsvpn namepsace with the following command:
+## Running programs within namespace-vpn
+With the namespace created and the tunnel established, any programs can now be run in the "nsvpn" network namespace.
+
+This can be done easily with the nsrun program provided with Namespace-VPN. To install nsrun, run the following in the namespace-vpn directory.
+```bash
+make && sudo make install
+```
+
+Then you can run any commands you want to run under the nsvpn namespace by running it under nsvpn. For example:
+```bash
+nsvpn {COMMAND} {...ARGUMENTS}
+```
+
+An alternative way to run commands is with the "ip" command's netns exec object. For example, commands can be run in the nsvpn namepsace with the following command:
 
 ```bash
 sudo ip netns exec nsvpn sudo -u $USER {COMMAND}
@@ -21,6 +34,7 @@ sudo ip netns exec nsvpn sudo -u $USER {COMMAND}
 - OpenVPN
 - Bash
 - nftables
+- gcc
 
 ## License
 This program is made available under the terms of the GPL 3.0 only.
