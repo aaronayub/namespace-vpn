@@ -27,5 +27,5 @@ int main(int argc, char **argv) {
 	if (mount("/etc/netns/nsvpn/nsswitch.conf","/etc/nsswitch.conf","",MS_BIND|MS_RDONLY,NULL) !=0) return 4;
 
 	// Execute the program with its arguments
-	execv(argv[1], &argv[1]);
+	execvp(argv[1], &argv[1]);
 }
