@@ -1,32 +1,26 @@
 # Namespace-VPN
 Namespace-VPN is a set of scripts to partition traffic into network namespaces, such that each namespace is functionally separate from one another.
 
-Namespace-VPN handles the creation of a network namespace "nsvpn", maintenance of firewall rules with nftables, and namespaced DNS resolution.
+Namespace-VPN handles the creation of a network namespace "nsvpn", maintenance of firewall rules with nftables, and namespaced DNS resolution. It also comes with a tool named "nsrun", which allows users to run programs under this isolated namespace.
 
-## Running namespace-vpn
-In order to create one namespaced VPN tunnel, run the start script, followed by any arguments to OpenVPN, such as config files, authentication, or timeout settings. For example, you can start namespace-vpn by running the following within the working directory of this project:
-
-```bash
-sudo ./start {OPENVPN_ARGUMENTS}
-```
-
-## Running programs within namespace-vpn
-With the namespace created and the tunnel established, any programs can now be run in the "nsvpn" network namespace.
-
-This can be done easily with the nsrun program provided with Namespace-VPN. To install nsrun, run the following in the namespace-vpn directory.
+## Installation
+To install Namespace-VPN, run the following:
 ```bash
 make && sudo make install
 ```
+This will build and install Namespace-VPN and nsrun. You can run Namespace-VPN with the "nsv" command.
 
-Then you can run any commands you want to run under the nsvpn namespace by running it under nsvpn. For example:
+## Running Namespace-VPN
+To run Namespace-VPN, run the start script followed by any arguments to OpenVPN, such as config files, authentication, or timeout settings. For example, you can start namespace-vpn by running the following:
+```bash
+sudo nsv {OPENVPN_ARGUMENTS}
+```
+With Namespace-VPN running, any programs can now be run in the "nsvpn" network namespace.
+
+## Running programs within Namespace-VPN
+With Namespace-VPN running, programs can be run under the isolated "nsvpn" namespace. To do so, run the following:
 ```bash
 nsvpn {COMMAND} {...ARGUMENTS}
-```
-
-An alternative way to run commands is with the "ip" command's netns exec object. For example, commands can be run in the nsvpn namepsace with the following command:
-
-```bash
-sudo ip netns exec nsvpn sudo -u $USER {COMMAND}
 ```
 
 ## Requirements
@@ -35,6 +29,12 @@ sudo ip netns exec nsvpn sudo -u $USER {COMMAND}
 - Bash
 - nftables
 - gcc
+
+## Uninstallation
+To uninstall Namespace-VPN, run the following:
+```bash
+sudo make uninstall
+```
 
 ## License
 This program is made available under the terms of the GPL 3.0 only.
