@@ -8,10 +8,10 @@
 
 # Move the tun0 device to the vpn namespace, configure it to use the endpoint and gateway
 /usr/sbin/ip link set tun0 netns nsvpn
-/usr/sbin/ip netns exec nsvpn /usr/sbin/ip link set tun0 up
+/usr/sbin/ip -n nsvpn link set tun0 up
 # shellcheck disable=SC2154 # envvars below are provided by OpenVPN
-/usr/sbin/ip netns exec nsvpn /usr/sbin/ip addr add "$ifconfig_local" peer "$route_vpn_gateway" dev tun0
-/usr/sbin/ip netns exec nsvpn /usr/sbin/ip route add default dev tun0
+/usr/sbin/ip -n nsvpn addr add "$ifconfig_local" peer "$route_vpn_gateway" dev tun0
+/usr/sbin/ip -n nsvpn route add default dev tun0
 
 # Update the resolv.conf file according to the OpenVPN config
 search=""
