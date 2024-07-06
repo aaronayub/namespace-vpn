@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright (c) 2023 Aaron Ayub
+# Copyright (c) 2023-2024 Aaron Ayub
 # SPDX-License-Identifier: GPL-3.0-only
 
 # Whitelist the VPN connection on the namespace
@@ -14,8 +14,9 @@
 /usr/sbin/ip -n nsvpn route add default dev tun0
 
 # Update the resolv.conf file according to the OpenVPN config
+mkdir -p /etc/netns/nsvpn
+exec 3>/etc/netns/nsvpn/resolv.conf
 search=""
-ns=""
 i=0
 while true; do
 		i=$((i+1))
@@ -25,17 +26,13 @@ while true; do
 		# Gather the search directives
     if [ "$opt" != "${opt#dhcp-option DOMAIN}" ]; then
         search="${search} ${opt#dhcp-option DOMAIN}"
-		# Gather all nameserver directives
+		# Write all nameserver directives
     elif [ "${opt}" != "${opt#dhcp-option DNS}" ]; then
-        ns="${ns}nameserver ${opt#dhcp-option DNS}\n"
+        printf "nameserver %s\n" "${opt#dhcp-option DNS}" >&3
     fi
 done
 
-# Write into the parsed directives into the namespaced resolv.conf file 
-if [ -n "$ns" ]; then
-    [ -n "$search" ] && search="search$search\n"
-
-		mkdir -p /etc/netns/nsvpn
-    echo -e "${search}${ns}" > /etc/netns/nsvpn/resolv.conf
-    chmod 644 /etc/netns/nsvpn/resolv.conf
-fi
+# Write search directive into resolv conf if available
+[ -n "$search" ] && printf "search%s" "$search" >&3
+exec 3>&-
+chmod 644 /etc/netns/nsvpn/resolv.conf
