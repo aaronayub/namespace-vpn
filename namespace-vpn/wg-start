@@ -1,0 +1,48 @@
+#!/bin/sh
+# Copyright (c) 2024 Aaron Ayub
+# SPDX-License-Identifier: GPL-3.0-only
+
+ns="nsvpn" # Network namespace
+dev="nsvpn-dev" # Wireguard network device
+
+basedir=$(dirname "$0")
+
+# Terminate early if not running as root
+if [ "$(id -u)" -ne 0 ]; then
+	echo "Namespace-vpn requires root privileges to run. Exiting early."
+	exit 1
+fi
+
+# Setup namespaced nsswitch.conf
+mkdir -p "/etc/netns/$ns"
+if ! cp "$basedir/nsswitch.conf" "/etc/netns/$ns/nsswitch.conf"; then
+	echo "Could not write to nsswitch.conf file. Exiting early."
+	exit 1
+fi
+
+# Create the device in the root namespace, and then move it into $ns
+ip netns add "$ns"
+ip link add "$dev" type wireguard
+ip link set "$dev" netns "$ns"
+
+# Configure the device from the provided config file
+if ! ip netns exec "$ns" wg setconf "$dev" "$1"; then
+  echo "Error setting the Wireguard configuration. Exiting early."
+  exit 1
+fi
+
+# Read the config file, and use it to build the resolv.conf file and add addresses.
+exec 3>"/etc/netns/$ns/resolv.conf"
+while IFS= read -r line; do
+  if [ "$line" != "${line#\#Address = }" ]; then
+    ip -n "$ns" addr add "${line#\#Address = }" dev "$dev"
+  elif [ "$line" != "${line#\#DNS = }" ]; then
+    printf "nameserver %s\n" "${line#\#DNS = }" >&3
+  fi
+done < "$1"
+chmod 644 "/etc/netns/$ns/resolv.conf"
+exec 3>&-
+
+# Enable and add the route for the device
+ip -n "$ns" link set "$dev" up
+ip -n "$ns" route add default dev "$dev"

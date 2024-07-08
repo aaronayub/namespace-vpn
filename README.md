@@ -1,7 +1,9 @@
 # Namespace-VPN
 Namespace-VPN is a set of scripts to partition traffic into network namespaces, such that each namespace is functionally separate from one another.
 
-Namespace-VPN handles the creation of a network namespace "nsvpn", maintenance of firewall rules with nftables, and namespaced DNS resolution. It also comes with a tool named "nsrun", which allows users to run programs under this isolated namespace.
+Namespace-VPN handles the creation of a network namespace "nsvpn",and provides namespaced DNS resolution. It also comes with a tool named "nsrun", which allows users to run programs under this isolated namespace.
+
+Both OpenVPN and Wireguard protocols are supported.
 
 ## Installation
 To install Namespace-VPN, run the following:
@@ -10,12 +12,17 @@ make && sudo make install
 ```
 This will build and install Namespace-VPN and nsrun. You can run Namespace-VPN with the "nsv" command.
 
-## Running Namespace-VPN
-To run Namespace-VPN, run the start script followed by any arguments to OpenVPN, such as config files, authentication, or timeout settings. For example, you can start namespace-vpn by running the following:
+## Running Namespace-VPN with OpenVPN
+Run the start script followed by any arguments to OpenVPN, such as config files, authentication, or timeout settings. For example, you can start namespace-vpn by running the following:
 ```bash
-sudo nsv {OPENVPN_ARGUMENTS}
+sudo nsvpn {OPENVPN_ARGUMENTS}
 ```
-With Namespace-VPN running, any programs can now be run in the "nsvpn" network namespace.
+
+## Running Namespace-VPN with Wireguard
+Namespace-VPN requires a wireguard configuration file to work. These files must be modified by commenting out any Address and DNS fields with a single # character. If not already present, at least one #Address and #DNS field must be added. Afterwards, namespace-vpn can be started with the following command:
+```bash
+sudo nsvpn-wg {PATH_TO_CONFIG_FILE}
+```
 
 ## Running programs within Namespace-VPN
 With Namespace-VPN running, programs can be run under the isolated "nsvpn" namespace. To do so, run the following:
@@ -25,10 +32,10 @@ nsvpn {COMMAND} {...ARGUMENTS}
 
 ## Requirements
 - Linux
-- OpenVPN
-- Bash
-- nftables
-- gcc
+- openvpn (for OpenVPN implementation)
+- bash (for OpenVPN implementation)
+- wireguard-tools (for Wireguard implementation)
+- gcc (for nsrun)
 
 ## Uninstallation
 To uninstall Namespace-VPN, run the following:
@@ -39,7 +46,7 @@ sudo make uninstall
 ## License
 This program is made available under the terms of the GPL 3.0 only.
 
-Copyright (C) 2023  Aaron Ayub
+Copyright (C) 2023-2024 Aaron Ayub
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
