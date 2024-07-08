@@ -10,7 +10,7 @@ To install Namespace-VPN, run the following:
 ```bash
 make && sudo make install
 ```
-This will build and install Namespace-VPN and nsrun. You can run Namespace-VPN with the "nsv" command.
+This will build and install Namespace-VPN and nsrun. You can run Namespace-VPN with either OpenVPN or Wireguard by following the instructions below.
 
 ## Running Namespace-VPN with OpenVPN
 Run the start script followed by any arguments to OpenVPN, such as config files, authentication, or timeout settings. For example, you can start namespace-vpn by running the following:
