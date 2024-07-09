@@ -31,6 +31,12 @@ if ! ip netns exec "$ns" wg setconf "$dev" "$1"; then
   exit 1
 fi
 
+# Set up firewall on the nsvpn namespace
+if ! ip netns exec nsvpn nft list table inet nsvpn >/dev/null && ! ip netns exec nsvpn nft -f "$basedir/nftables-wg.nft"; then
+	echo "Could not set up firewall. Exiting early."
+	exit 1
+fi
+
 # Read the config file, and use it to build the resolv.conf file and add addresses.
 exec 3>"/etc/netns/$ns/resolv.conf"
 while IFS= read -r line; do

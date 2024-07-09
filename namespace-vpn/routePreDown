@@ -1,5 +1,0 @@
-#!/bin/sh
-# Copyright (c) 2023 Aaron Ayub
-# SPDX-License-Identifier: GPL-3.0-only
-
-/usr/sbin/ip netns exec nsvpn /usr/sbin/nft flush chain inet nsvpn whitelist
