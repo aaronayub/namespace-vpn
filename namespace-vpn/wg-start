@@ -32,7 +32,7 @@ if ! ip netns exec "$ns" wg setconf "$dev" "$1"; then
 fi
 
 # Set up firewall on the nsvpn namespace
-if ! ip netns exec nsvpn nft list table inet nsvpn >/dev/null && ! ip netns exec nsvpn nft -f "$basedir/nftables-wg.nft"; then
+if ! ip netns exec nsvpn nft list table inet nsvpn 2>/dev/null >/dev/null && ! ip netns exec nsvpn nft -f "$basedir/nftables-wg.nft"; then
 	echo "Could not set up firewall. Exiting early."
 	exit 1
 fi
