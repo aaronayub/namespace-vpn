@@ -19,7 +19,6 @@ fi
 
 # Set up network namespace if not already done
 ip netns add nsvpn
-ip -n nsvpn ip link set lo up
 
 # Setup namespaced nsswitch.conf
 mkdir -p /etc/netns/nsvpn
