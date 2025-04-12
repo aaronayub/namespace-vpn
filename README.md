@@ -46,7 +46,7 @@ sudo make uninstall
 ## License
 This program is made available under the terms of the GPL 3.0 only.
 
-Copyright (C) 2023-2024 Aaron Ayub
+Copyright (C) 2023-2025 Aaron Ayub
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
